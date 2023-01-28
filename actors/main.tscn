@@ -1,0 +1,74 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://actors/playerPaddle.tscn" type="PackedScene" id=2]
+[ext_resource path="res://actors/ball.tscn" type="PackedScene" id=3]
+[ext_resource path="res://actors/main.gd" type="Script" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 2, 450 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 300, 2 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 350, 2 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 9.5, 40 )
+
+[sub_resource type="Environment" id=5]
+
+[node name="main" type="Node2D"]
+script = ExtResource( 4 )
+
+[node name="leftWall" type="StaticBody2D" parent="."]
+position = Vector2( -2, 450 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="leftWall"]
+shape = SubResource( 1 )
+
+[node name="rightWall" type="StaticBody2D" parent="."]
+position = Vector2( 602, 450 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="rightWall"]
+shape = SubResource( 1 )
+
+[node name="topWall" type="StaticBody2D" parent="."]
+position = Vector2( 300, -2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="topWall"]
+shape = SubResource( 2 )
+
+[node name="playerPaddle" parent="." instance=ExtResource( 2 )]
+position = Vector2( 300, 900 )
+
+[node name="lowerWall" type="StaticBody2D" parent="."]
+position = Vector2( 300, 950 )
+collision_layer = 64
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="lowerWall"]
+shape = SubResource( 3 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="lowerWall"]
+position = Vector2( 340, -42 )
+shape = SubResource( 4 )
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="lowerWall"]
+position = Vector2( -340, -42 )
+shape = SubResource( 4 )
+
+[node name="holders" type="Node2D" parent="."]
+
+[node name="brickExplosionHolder" type="Node2D" parent="holders"]
+
+[node name="powerupHolder" type="Node2D" parent="holders"]
+
+[node name="ballHolder" type="Node2D" parent="holders"]
+
+[node name="ball" parent="holders/ballHolder" instance=ExtResource( 3 )]
+position = Vector2( 300, 450 )
+
+[node name="brickHolder" type="Node2D" parent="holders"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 5 )
