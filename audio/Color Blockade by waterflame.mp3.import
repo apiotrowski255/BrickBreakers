@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Color Blockade by waterflame.mp3-ea6d8bb9d6f0f9a101eed1ccdf57923b.mp3str"
+
+[deps]
+
+source_file="res://audio/Color Blockade by waterflame.mp3"
+dest_files=[ "res://.import/Color Blockade by waterflame.mp3-ea6d8bb9d6f0f9a101eed1ccdf57923b.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

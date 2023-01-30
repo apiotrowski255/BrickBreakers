@@ -9,7 +9,7 @@ onready var brick_explosion_holder: Node2D = $holders/brickExplosionHolder
 onready var powerup_holder: Node2D = $holders/powerupHolder
 onready var ball_holder: Node2D = $holders/ballHolder
 onready var brick_holder: Node2D = $holders/brickHolder
-
+onready var audio_stream_player = $AudioStreamPlayer
 onready var original_ball: KinematicBody2D = $holders/ballHolder/ball
 
 
@@ -18,6 +18,7 @@ func _ready() -> void:
 	load_bricks()
 	original_ball.connect("tree_exited", self ,"_on_ball_delete")
 	original_ball.start_moving()
+	audio_stream_player.play()
 	
 
 func _process(delta: float) -> void:
@@ -83,6 +84,7 @@ func _trigger_multiply_power_up() -> void:
 		var ball_new = ball_scene.instance()
 		ball_new.global_position = b.global_position
 		ball_new.direction = b.direction.rotated(PI/24)
+		ball_new.speed = b.speed
 		b.direction = b.direction.rotated(-PI/24)
 		ball_new.connect("tree_exited", self ,"_on_ball_delete")
 		ball_array.append(ball_new)

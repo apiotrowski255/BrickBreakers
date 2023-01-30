@@ -20,6 +20,7 @@ func _ready() -> void:
 
 func start_moving() -> void:
 	randomize()
+	line_2d.visible = true
 	timer.start(1.0)
 	yield(timer, "timeout")
 	speed = 0
@@ -30,10 +31,14 @@ func start_moving() -> void:
 	yield(timer, "timeout")
 	speed = 8.0
 	cpu_particles_2d.direction = -direction
+	line_2d.visible = false
+	tween.start()
 
 func choose_random_direction() -> Vector2:
 	var x = rand_range(-1.0, 1.0)
-	var y = rand_range(-1.0, 1.0)
+	var y = rand_range(0.2, 1.0)
+	if rand_range(0.0, 1.0) >= 0.5:
+		y = -y
 	var v = Vector2(x, y).normalized()
 	return v
 
@@ -51,9 +56,6 @@ func _physics_process(delta: float) -> void:
 	var result = move_and_collide(direction * speed)
 	line_2d.rotation = direction.angle()
 	if result != null:
-		
-#		print(result.collider.name)
-#		print(log(result.collider.get_collision_layer())/log(2) + 1)
 #		Colliding with a brick
 		if log(result.collider.get_collision_layer())/log(2) + 1 == 2:
 			result.collider.decrement_life()
@@ -61,9 +63,11 @@ func _physics_process(delta: float) -> void:
 				direction = direction.bounce(result.normal)
 			else:
 				allow_speed_deactivate = true
+
 #		Colliding with the player
 		elif log(result.collider.get_collision_layer())/log(2) + 1 == 3:
 			direction = result.collider.global_position.direction_to(global_position)
+
 #		Colliding with bottom wall
 #		respawn the ball
 		elif log(result.collider.get_collision_layer())/log(2) + 1 == 7:
@@ -73,4 +77,9 @@ func _physics_process(delta: float) -> void:
 				deactivate_speed_power_up()
 				allow_speed_deactivate = false
 			direction = direction.bounce(result.normal)
+
+		if abs(direction.y) < 0.05:
+			direction.y += 0.1
+			direction = direction.normalized()
+		
 		cpu_particles_2d.direction = -direction
