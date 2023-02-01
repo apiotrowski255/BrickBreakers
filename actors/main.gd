@@ -16,6 +16,7 @@ onready var player_paddle = $playerPaddle
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	read_level_01() 
 	load_bricks()
 	original_ball.connect("tree_exited", self ,"_on_ball_delete")
 	original_ball.start_moving()
@@ -29,7 +30,7 @@ func _process(delta: float) -> void:
 	pass
 
 	
-func load_brick_layer(y_position : int) -> void:
+func load_brick_layer(y_position: int, lives: int = 1) -> void:
 	var i := 0
 	while i < 6:
 		var new_brick = brick.instance()
@@ -38,11 +39,10 @@ func load_brick_layer(y_position : int) -> void:
 		new_brick.connect("spawn_particles", self, "_on_brick_destroy")
 		new_brick.connect("spawn_powerup", self, "_spawn_powerup")
 		new_brick.connect("tree_exited", self, "_on_brick_exit")
-		new_brick.lives = 1
+		new_brick.lives = lives
 		i += 1
 
 func _on_brick_exit() -> void: 
-	print(brick_holder.get_child_count())
 	if brick_holder.get_child_count() == 0:
 		print("Level complete")
 		
@@ -89,14 +89,27 @@ func _trigger_power_up(powerupType) -> void:
 	elif powerupType == PowerUp.PowerUps.SPEEDUP:
 		_trigger_speed_power_up()
 	elif powerupType == PowerUp.PowerUps.SEEK:
-		print("Seek")
+		_trigger_seek_power_up()
 	elif powerupType == PowerUp.PowerUps.SHRINK_PADDLE:
-		print("shrink paddle")
+		player_paddle.shrink_paddle()
 	elif powerupType == PowerUp.PowerUps.EXPAND_PADDLE:
-		print("expand paddle")
+		player_paddle.expand_paddle()
 	elif powerupType == PowerUp.PowerUps.ADD_POINTS:
 		print("add points")
-	player_paddle.shrink_paddle()
+
+func get_random_brick_position() -> Vector2:
+	if brick_holder.get_child_count() == 0:
+		return Vector2.ZERO
+	randomize()
+	var random_brick = brick_holder.get_child(int(rand_range(0, brick_holder.get_child_count())))
+	return random_brick.position
+
+func _trigger_seek_power_up() -> void:
+	for b in ball_holder.get_children():
+		var p1: Vector2 = get_random_brick_position()
+		var p2: Vector2 = b.position
+		var direction = p2.direction_to(p1)
+		b.direction = direction
 
 
 # Takes all existings balls and doubles their speed
@@ -130,6 +143,8 @@ func _trigger_multiply_power_up() -> void:
 func _on_ball_delete() -> void:
 	if ball_holder.get_child_count() == 0:
 		print("player lose life")
+		for p in powerup_holder.get_children():
+			p.queue_free()
 		spawn_ball()
 
 func spawn_ball() -> void:
@@ -138,3 +153,19 @@ func spawn_ball() -> void:
 	ball_holder.add_child(original_ball)
 	original_ball.connect("tree_exited", self ,"_on_ball_delete")
 	original_ball.start_moving()
+	player_paddle.reset_paddle_size()
+
+func read_level_01() -> void:
+	var file = File.new()
+	file.open("res://levels/level01.txt", File.READ)
+	var content = file.get_as_text()
+	var i = 0
+	var j = 0
+	while i < content.length():
+		print(str(i%7) + " " + str(j))
+		if content[i] == "\n":
+			j += 1
+		i += 1
+		
+	file.close()
+	

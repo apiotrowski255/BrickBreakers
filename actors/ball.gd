@@ -20,6 +20,7 @@ func _ready() -> void:
 
 func start_moving() -> void:
 	randomize()
+	cpu_particles_2d.emitting = false
 	line_2d.visible = true
 	timer.start(1.0)
 	yield(timer, "timeout")
@@ -31,6 +32,7 @@ func start_moving() -> void:
 	yield(timer, "timeout")
 	speed = 8.0
 	cpu_particles_2d.direction = -direction
+	cpu_particles_2d.emitting = true
 	line_2d.visible = false
 	tween.start()
 

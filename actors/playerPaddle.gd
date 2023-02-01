@@ -40,4 +40,18 @@ func shrink_paddle() -> void:
 	else:
 		return
 
+func expand_paddle() -> void:
+	if collision_shape_2d.scale == Vector2(0.5, 1):
+		tween.interpolate_property(collision_shape_2d, "scale", null, Vector2(1, 1), 1.0)
+		tween.interpolate_property(white_square, "scale", null, Vector2(12.5, 2.5), 1.0)
+		tween.start()
+	elif collision_shape_2d.scale == Vector2(1, 1):
+		tween.interpolate_property(collision_shape_2d, "scale", null, Vector2(1.5, 1), 1.0)
+		tween.interpolate_property(white_square, "scale", null, Vector2(18.75, 2.5), 1.0)
+		tween.start()
+	else:
+		return
 
+func reset_paddle_size() -> void:
+	collision_shape_2d.scale = Vector2(1, 1)
+	white_square.scale = Vector2(12.5, 2.5)
