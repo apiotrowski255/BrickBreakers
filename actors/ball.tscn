@@ -22,6 +22,7 @@ gravity = Vector2( 0, 0 )
 initial_velocity = 20.0
 damping = 2.0
 scale_amount = 5.0
+color = Color( 0.0784314, 0.619608, 0.831373, 1 )
 color_ramp = SubResource( 2 )
 
 [node name="Circle" type="Sprite" parent="."]

@@ -9,38 +9,43 @@ onready var brick_explosion_holder: Node2D = $holders/brickExplosionHolder
 onready var powerup_holder: Node2D = $holders/powerupHolder
 onready var ball_holder: Node2D = $holders/ballHolder
 onready var brick_holder: Node2D = $holders/brickHolder
-onready var audio_stream_player = $AudioStreamPlayer
 onready var original_ball: KinematicBody2D = $holders/ballHolder/ball
 onready var player_paddle = $playerPaddle
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	read_level_01() 
-	load_bricks()
+	read_level(1)
+	# read_level_03()
 	original_ball.connect("tree_exited", self ,"_on_ball_delete")
 	original_ball.start_moving()
-	audio_stream_player.play()
-	
+
 
 func _process(delta: float) -> void:
 	for emitter in brick_explosion_holder.get_children():
 		if emitter.emitting == false:
 			emitter.queue_free()
 	pass
+	if Input.is_action_just_pressed("quit"):
+		get_tree().change_scene("res://UI/mainMenu.tscn")
 
-	
-func load_brick_layer(y_position: int, lives: int = 1) -> void:
-	var i := 0
-	while i < 6:
+func load_brick_layer(y_position: int, texture_number: int = 1, lives: int = 1) -> void:
+	var current_x_position := 50
+	if texture_number > 20:
+		current_x_position = 10
+	while current_x_position < 600:
 		var new_brick = brick.instance()
-		new_brick.global_position = Vector2(i * 100 + 50, y_position)
+		new_brick.global_position = Vector2(current_x_position, y_position)
 		brick_holder.add_child(new_brick)
 		new_brick.connect("spawn_particles", self, "_on_brick_destroy")
 		new_brick.connect("spawn_powerup", self, "_spawn_powerup")
 		new_brick.connect("tree_exited", self, "_on_brick_exit")
 		new_brick.lives = lives
-		i += 1
+		new_brick.set_texture_number(texture_number)
+		if texture_number > 20:
+			current_x_position += 20
+		else:
+			current_x_position += 100
 
 func _on_brick_exit() -> void: 
 	if brick_holder.get_child_count() == 0:
@@ -83,7 +88,6 @@ func pick_random_powerup_type() -> Resource:
 		return PowerUp.PowerUps.ADD_POINTS
 	
 func _trigger_power_up(powerupType) -> void:
-	print(powerup)
 	if powerupType == PowerUp.PowerUps.MULTIPLY:
 		_trigger_multiply_power_up()
 	elif powerupType == PowerUp.PowerUps.SPEEDUP:
@@ -155,17 +159,55 @@ func spawn_ball() -> void:
 	original_ball.start_moving()
 	player_paddle.reset_paddle_size()
 
-func read_level_01() -> void:
+func read_level_03() -> void:
 	var file = File.new()
-	file.open("res://levels/level01.txt", File.READ)
-	var content = file.get_as_text()
-	var i = 0
-	var j = 0
-	while i < content.length():
-		print(str(i%7) + " " + str(j))
-		if content[i] == "\n":
-			j += 1
-		i += 1
-		
+	file.open("res://levels/level03.txt", File.READ)
+	var line_number := 0
+	while file.get_position() != file.get_len():
+		var line = file.get_line()
+		handle_line(line, line_number)
+		line_number += 1
 	file.close()
-	
+
+
+func handle_line(line: String, line_number: int) -> void:
+	if line[0] == "l":
+		handle_l_function(line, line_number)
+
+func handle_l_function(line: String, line_number: int) -> void:
+	var texture: int = 1
+	var lives: int = 1
+	if line == "l":
+		pass
+	elif line.length() == 3:
+		texture = int(line[1]) * 10 + int(line[2])
+	elif line.length() == 4:
+		texture = int(line[1]) * 10 + int(line[2])
+		lives = int(line[3])
+	load_brick_layer(30 + 20*line_number, texture, lives)
+
+
+func read_level(level_number: int) -> void:
+	if level_number < 10:
+		var file = File.new()
+		file.open("res://levels/level0" + str(level_number) + ".txt", File.READ)
+		var line_number := 0
+		while file.get_position() != file.get_len():
+			var line = file.get_line()
+			handle_line(line, line_number)
+			line_number += 1
+		file.close()
+	else:
+		# Most likely will not have more than 9 levels. 
+		pass
+
+func spawn_brick(x_position: int, y_position: int, color_number: int, lives: int = 1) -> void:
+	var new_brick = brick.instance()
+	new_brick.global_position = Vector2(x_position, y_position)
+	brick_holder.add_child(new_brick)
+	new_brick.connect("spawn_particles", self, "_on_brick_destroy")
+	new_brick.connect("spawn_powerup", self, "_spawn_powerup")
+	new_brick.connect("tree_exited", self, "_on_brick_exit")
+	new_brick.lives = lives
+	new_brick.set_texture_number(color_number)
+

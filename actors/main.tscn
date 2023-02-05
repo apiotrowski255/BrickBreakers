@@ -1,6 +1,5 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://audio/Color Blockade by waterflame.mp3" type="AudioStream" id=1]
 [ext_resource path="res://actors/playerPaddle.tscn" type="PackedScene" id=2]
 [ext_resource path="res://actors/ball.tscn" type="PackedScene" id=3]
 [ext_resource path="res://actors/main.gd" type="Script" id=4]
@@ -60,8 +59,6 @@ shape = SubResource( 4 )
 
 [node name="holders" type="Node2D" parent="."]
 
-[node name="brickExplosionHolder" type="Node2D" parent="holders"]
-
 [node name="powerupHolder" type="Node2D" parent="holders"]
 
 [node name="ballHolder" type="Node2D" parent="holders"]
@@ -71,8 +68,7 @@ position = Vector2( 300, 450 )
 
 [node name="brickHolder" type="Node2D" parent="holders"]
 
+[node name="brickExplosionHolder" type="Node2D" parent="holders"]
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 5 )
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 1 )

@@ -1,0 +1,38 @@
+[gd_scene format=2]
+
+[node name="mainGameUI" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_top = 10.0
+margin_right = 594.0
+margin_bottom = 24.0
+grow_horizontal = 0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+
+[node name="score" type="Label" parent="HBoxContainer"]
+margin_right = 505.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "     Score: "
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+margin_left = 509.0
+margin_right = 594.0
+margin_bottom = 14.0
+text = "lives: %s       "
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="CenterContainer"]
+visible = false
+margin_left = 272.0
+margin_top = 443.0
+margin_right = 328.0
+margin_bottom = 457.0
+text = "You Win!"

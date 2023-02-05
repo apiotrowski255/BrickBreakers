@@ -5,7 +5,7 @@ export var speed := 5.0
 var direction : Vector2 = Vector2.ZERO
 onready var cpu_particles_2d = $CPUParticles2D
 onready var collision_shape_2d = $CollisionShape2D
-onready var white_square = $WhiteSquare
+onready var animated_sprite = $AnimatedSprite
 onready var tween = $Tween
 
 # Called when the node enters the scene tree for the first time.
@@ -29,29 +29,29 @@ func _physics_process(delta: float) -> void:
 	move_and_collide(direction * speed)
 
 func shrink_paddle() -> void:
-	if collision_shape_2d.scale == Vector2(1.5, 1):
+	if animated_sprite.scale == Vector2(0.206186 * 1.5, 0.15625):
 		tween.interpolate_property(collision_shape_2d, "scale", null, Vector2(1, 1), 1.0)
-		tween.interpolate_property(white_square, "scale", null, Vector2(12.5, 2.5), 1.0)
+		tween.interpolate_property(animated_sprite, "scale", null, Vector2(0.206186, 0.15625), 1.0)
 		tween.start()
-	elif collision_shape_2d.scale == Vector2(1, 1):
+	elif animated_sprite.scale == Vector2(0.206186, 0.15625):
 		tween.interpolate_property(collision_shape_2d, "scale", null, Vector2(0.5, 1), 1.0)
-		tween.interpolate_property(white_square, "scale", null, Vector2(6.25, 2.5), 1.0)
+		tween.interpolate_property(animated_sprite, "scale", null, Vector2(0.206186 * 0.5, 0.15625), 1.0)
 		tween.start()
 	else:
 		return
 
 func expand_paddle() -> void:
-	if collision_shape_2d.scale == Vector2(0.5, 1):
+	if animated_sprite.scale == Vector2(0.206186 * 0.5, 0.15625):
 		tween.interpolate_property(collision_shape_2d, "scale", null, Vector2(1, 1), 1.0)
-		tween.interpolate_property(white_square, "scale", null, Vector2(12.5, 2.5), 1.0)
+		tween.interpolate_property(animated_sprite, "scale", null, Vector2(0.206186, 0.15625), 1.0)
 		tween.start()
-	elif collision_shape_2d.scale == Vector2(1, 1):
+	elif animated_sprite.scale == Vector2(0.206186, 0.15625):
 		tween.interpolate_property(collision_shape_2d, "scale", null, Vector2(1.5, 1), 1.0)
-		tween.interpolate_property(white_square, "scale", null, Vector2(18.75, 2.5), 1.0)
+		tween.interpolate_property(animated_sprite, "scale", null, Vector2(0.206186 * 1.5, 0.15625), 1.0)
 		tween.start()
 	else:
 		return
 
 func reset_paddle_size() -> void:
 	collision_shape_2d.scale = Vector2(1, 1)
-	white_square.scale = Vector2(12.5, 2.5)
+	animated_sprite.scale = Vector2(0.206186, 0.15625)
