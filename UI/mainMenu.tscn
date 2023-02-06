@@ -47,7 +47,7 @@ margin_top = 99.0
 margin_right = 500.0
 margin_bottom = 283.0
 text = "Use \"A\" to move left and \"D\" to move right
-Or Arrow keys if you are left handed
+Arrow keys work too for movement
 Press \"q\" to quit the game (Once you started playing).
 
 Music: Color Blockade by Waterflame 

@@ -36,6 +36,11 @@ func start_moving() -> void:
 	line_2d.visible = false
 	tween.start()
 
+func reset() -> void:
+	global_position = Vector2(300, 450)
+	speed = 0
+	start_moving() 
+
 func choose_random_direction() -> Vector2:
 	var x = rand_range(-1.0, 1.0)
 	var y = rand_range(0.2, 1.0)

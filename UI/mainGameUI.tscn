@@ -1,8 +1,11 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://UI/mainGameUI.gd" type="Script" id=1]
 
 [node name="mainGameUI" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 1 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 margin_top = 10.0
@@ -13,26 +16,32 @@ size_flags_horizontal = 8
 size_flags_vertical = 8
 
 [node name="score" type="Label" parent="HBoxContainer"]
-margin_right = 505.0
+unique_name_in_owner = true
+margin_right = 502.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "     Score: "
+text = "     Score: {}"
 
-[node name="Label" type="Label" parent="HBoxContainer"]
-margin_left = 509.0
+[node name="lives" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+margin_left = 506.0
 margin_right = 594.0
 margin_bottom = 14.0
-text = "lives: %s       "
+text = "lives: {}          "
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="CenterContainer"]
-visible = false
+[node name="centerText" type="Label" parent="CenterContainer"]
+unique_name_in_owner = true
 margin_left = 272.0
 margin_top = 443.0
 margin_right = 328.0
 margin_bottom = 457.0
 text = "You Win!"
+
+[node name="Timer" type="Timer" parent="."]

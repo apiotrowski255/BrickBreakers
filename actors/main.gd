@@ -11,15 +11,30 @@ onready var ball_holder: Node2D = $holders/ballHolder
 onready var brick_holder: Node2D = $holders/brickHolder
 onready var original_ball: KinematicBody2D = $holders/ballHolder/ball
 onready var player_paddle = $playerPaddle
+onready var main_game_ui = $"%mainGameUI"
 
+
+var score := 0 setget set_score
+var player_lives := 5 setget decrement_lives
+var current_level := 1 setget increment_level
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	read_level(1)
+	read_level(current_level)
 	# read_level_03()
 	original_ball.connect("tree_exited", self ,"_on_ball_delete")
 	original_ball.start_moving()
 
+func set_score(value : int) -> void:
+	score = value
+	main_game_ui.update_score(score)
+
+func increment_level(increment: int) -> void:
+	current_level += increment
+
+func decrement_lives(increment: int = 1) -> void:
+	player_lives -= 1
+	main_game_ui.update_lives(player_lives)
 
 func _process(delta: float) -> void:
 	for emitter in brick_explosion_holder.get_children():
@@ -49,8 +64,20 @@ func load_brick_layer(y_position: int, texture_number: int = 1, lives: int = 1) 
 
 func _on_brick_exit() -> void: 
 	if brick_holder.get_child_count() == 0:
+		set_score(score + 100)
 		print("Level complete")
-		
+		increment_level(1)
+		main_game_ui.show_center_text()
+		clear_balls_except_for_one()
+		var temp_ball = ball_holder.get_child(0)
+		temp_ball.reset()
+
+func clear_balls_except_for_one() -> void:
+	var i = 1
+	while i < ball_holder.get_child_count():
+		ball_holder.get_child(i).queue_free()
+		i += 1
+
 func load_bricks() -> void:
 	var i:= 0
 	while i < 8:
@@ -62,6 +89,7 @@ func _on_brick_destroy(position : Vector2) -> void:
 	new_explosion.global_position = position
 	new_explosion.emitting = true
 	brick_explosion_holder.add_child(new_explosion)
+	set_score(score + 10)
 
 
 func _spawn_powerup(position: Vector2) -> void:
@@ -99,7 +127,7 @@ func _trigger_power_up(powerupType) -> void:
 	elif powerupType == PowerUp.PowerUps.EXPAND_PADDLE:
 		player_paddle.expand_paddle()
 	elif powerupType == PowerUp.PowerUps.ADD_POINTS:
-		print("add points")
+		set_score(score + 50)
 
 func get_random_brick_position() -> Vector2:
 	if brick_holder.get_child_count() == 0:
@@ -146,10 +174,13 @@ func _trigger_multiply_power_up() -> void:
 
 func _on_ball_delete() -> void:
 	if ball_holder.get_child_count() == 0:
-		print("player lose life")
+		decrement_lives()
 		for p in powerup_holder.get_children():
 			p.queue_free()
 		spawn_ball()
+	
+	if player_lives == 0:
+		print("you lose!")
 
 func spawn_ball() -> void:
 	original_ball = ball_scene.instance()
@@ -158,16 +189,6 @@ func spawn_ball() -> void:
 	original_ball.connect("tree_exited", self ,"_on_ball_delete")
 	original_ball.start_moving()
 	player_paddle.reset_paddle_size()
-
-func read_level_03() -> void:
-	var file = File.new()
-	file.open("res://levels/level03.txt", File.READ)
-	var line_number := 0
-	while file.get_position() != file.get_len():
-		var line = file.get_line()
-		handle_line(line, line_number)
-		line_number += 1
-	file.close()
 
 
 func handle_line(line: String, line_number: int) -> void:
@@ -184,7 +205,7 @@ func handle_l_function(line: String, line_number: int) -> void:
 	elif line.length() == 4:
 		texture = int(line[1]) * 10 + int(line[2])
 		lives = int(line[3])
-	load_brick_layer(30 + 20*line_number, texture, lives)
+	load_brick_layer(50 + 20*line_number, texture, lives)
 
 
 func read_level(level_number: int) -> void:
@@ -211,3 +232,8 @@ func spawn_brick(x_position: int, y_position: int, color_number: int, lives: int
 	new_brick.lives = lives
 	new_brick.set_texture_number(color_number)
 
+
+
+func _on_mainGameUI_next_level():
+	read_level(current_level)
+	main_game_ui.hide_center_text()
