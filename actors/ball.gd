@@ -11,11 +11,13 @@ onready var timer: Timer = $Timer
 onready var line_2d: Line2D = $Line2D
 onready var tween: Tween = $Tween
 onready var ball: KinematicBody2D = $"."
+onready var audio_stream_player = $AudioStreamPlayer
 
 signal player_lose_life
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	audio_stream_player.volume_db = AudioMusic.get_sfx_volume()
 	pass # Replace with function body.
 
 func start_moving() -> void:
@@ -37,9 +39,17 @@ func start_moving() -> void:
 	tween.start()
 
 func reset() -> void:
+	cpu_particles_2d.emitting = false
+	self.hide()
 	global_position = Vector2(300, 450)
 	speed = 0
+	direction = Vector2.RIGHT
+	timer.start(3.0)
+	yield(timer, "timeout")
+	self.show()
 	start_moving() 
+	
+	
 
 func choose_random_direction() -> Vector2:
 	var x = rand_range(-1.0, 1.0)
@@ -63,6 +73,8 @@ func _physics_process(delta: float) -> void:
 	var result = move_and_collide(direction * speed)
 	line_2d.rotation = direction.angle()
 	if result != null:
+		
+		audio_stream_player.play()
 #		Colliding with a brick
 		if log(result.collider.get_collision_layer())/log(2) + 1 == 2:
 			result.collider.decrement_life()

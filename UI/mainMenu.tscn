@@ -1,6 +1,37 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://UI/mainMenu.gd" type="Script" id=1]
+[ext_resource path="res://audio/mixkit-video-game-retro-click-237.wav" type="AudioStream" id=2]
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "fade_to_black"
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
 
 [node name="mainMenu" type="Control"]
 anchor_right = 1.0
@@ -45,10 +76,12 @@ text = "Options"
 [node name="Label2" type="Label" parent="MarginContainer/VBoxContainer"]
 margin_top = 99.0
 margin_right = 500.0
-margin_bottom = 283.0
+margin_bottom = 317.0
 text = "Use \"A\" to move left and \"D\" to move right
 Arrow keys work too for movement
 Press \"q\" to quit the game (Once you started playing).
+
+There is only 3 levels to this game - It's short. 
 
 Music: Color Blockade by Waterflame 
 Link to Music: https://www.youtube.com/watch?v=I6PUA5mv1kY
@@ -58,6 +91,21 @@ I love how these are free to use!
 
 Made by Alex Piotrowski in Godot"
 align = 1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 0 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 1 )
+anims/fade_to_black = SubResource( 2 )
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/playButton" to="." method="_on_playButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/optionButton" to="." method="_on_optionButton_pressed"]

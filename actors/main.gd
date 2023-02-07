@@ -12,6 +12,8 @@ onready var brick_holder: Node2D = $holders/brickHolder
 onready var original_ball: KinematicBody2D = $holders/ballHolder/ball
 onready var player_paddle = $playerPaddle
 onready var main_game_ui = $"%mainGameUI"
+onready var timer = $Timer
+onready var audio_stream_player = $AudioStreamPlayer
 
 
 var score := 0 setget set_score
@@ -24,6 +26,7 @@ func _ready() -> void:
 	# read_level_03()
 	original_ball.connect("tree_exited", self ,"_on_ball_delete")
 	original_ball.start_moving()
+	audio_stream_player.volume_db = AudioMusic.get_sfx_volume()
 
 func set_score(value : int) -> void:
 	score = value
@@ -31,9 +34,10 @@ func set_score(value : int) -> void:
 
 func increment_level(increment: int) -> void:
 	current_level += increment
+	main_game_ui.update_level(current_level)
 
 func decrement_lives(increment: int = 1) -> void:
-	player_lives -= 1
+	player_lives -= increment
 	main_game_ui.update_lives(player_lives)
 
 func _process(delta: float) -> void:
@@ -65,12 +69,31 @@ func load_brick_layer(y_position: int, texture_number: int = 1, lives: int = 1) 
 func _on_brick_exit() -> void: 
 	if brick_holder.get_child_count() == 0:
 		set_score(score + 100)
-		print("Level complete")
+		player_paddle.reset_paddle_size()
 		increment_level(1)
-		main_game_ui.show_center_text()
-		clear_balls_except_for_one()
-		var temp_ball = ball_holder.get_child(0)
-		temp_ball.reset()
+		if current_level == 4:
+			clear_balls_except_for_one()
+			clear_powerups()
+			original_ball = ball_holder.get_child(0)
+			original_ball.hide()
+			original_ball.speed = 0
+			original_ball.global_position = Vector2(300, 450)
+			main_game_ui.show_center_text("You win! Thanks for playing")
+			timer.start(4.0)
+			yield(timer, "timeout")
+			get_tree().change_scene("res://UI/mainMenu.tscn")
+		else: 
+			main_game_ui.show_center_text("Level Completed!")
+			clear_balls_except_for_one()
+			clear_powerups()
+			original_ball = ball_holder.get_child(0)
+			original_ball.reset()
+
+func clear_powerups() -> void:
+	var i = 0
+	while i < powerup_holder.get_child_count():
+		powerup_holder.get_child(i).queue_free()
+		i += 1
 
 func clear_balls_except_for_one() -> void:
 	var i = 1
@@ -128,6 +151,7 @@ func _trigger_power_up(powerupType) -> void:
 		player_paddle.expand_paddle()
 	elif powerupType == PowerUp.PowerUps.ADD_POINTS:
 		set_score(score + 50)
+	audio_stream_player.play()
 
 func get_random_brick_position() -> Vector2:
 	if brick_holder.get_child_count() == 0:
@@ -177,10 +201,17 @@ func _on_ball_delete() -> void:
 		decrement_lives()
 		for p in powerup_holder.get_children():
 			p.queue_free()
-		spawn_ball()
-	
-	if player_lives == 0:
-		print("you lose!")
+		if player_lives != 0:
+			spawn_ball()
+		else:
+			for b in ball_holder.get_children():
+				b.queue_free()
+			for b in brick_explosion_holder.get_children():
+				b.queue_free()
+			main_game_ui.show_center_text("You lose! Better luck next time. ")
+			timer.start(4.0)
+			yield(timer, "timeout")
+			get_tree().change_scene("res://UI/mainMenu.tscn")
 
 func spawn_ball() -> void:
 	original_ball = ball_scene.instance()
@@ -235,5 +266,8 @@ func spawn_brick(x_position: int, y_position: int, color_number: int, lives: int
 
 
 func _on_mainGameUI_next_level():
-	read_level(current_level)
-	main_game_ui.hide_center_text()
+	if current_level == 4 or player_lives == 0:
+		pass
+	else:
+		read_level(current_level)
+		main_game_ui.hide_center_text()

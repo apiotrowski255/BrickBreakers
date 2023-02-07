@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://actors/ball.gd" type="Script" id=1]
 [ext_resource path="res://sprites/Breakout Tile Set Free/PNG/58-Breakout-Tiles.png" type="Texture" id=2]
+[ext_resource path="res://audio/mixkit-player-jumping-in-a-video-game-2043.wav" type="AudioStream" id=3]
 
 [sub_resource type="CircleShape2D" id=1]
 
@@ -44,3 +45,6 @@ points = PoolVector2Array( 40, -8, 48, 0, 40, 8 )
 width = 5.0
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )

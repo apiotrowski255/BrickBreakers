@@ -15,13 +15,21 @@ grow_horizontal = 0
 size_flags_horizontal = 8
 size_flags_vertical = 8
 
+[node name="current_level" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+margin_right = 123.0
+margin_bottom = 14.0
+size_flags_vertical = 3
+text = "     Current Level: {}"
+
 [node name="score" type="Label" parent="HBoxContainer"]
 unique_name_in_owner = true
+margin_left = 127.0
 margin_right = 502.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "     Score: {}"
+text = "  Score: {}"
 
 [node name="lives" type="Label" parent="HBoxContainer"]
 unique_name_in_owner = true
